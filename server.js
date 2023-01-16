@@ -8,15 +8,13 @@ const app = express()
 app.use(express.static("public"));
 
 // for body encoding -> post requests
-// app.use(express.urlencoded({extended: false}))
-
+app.use(express.urlencoded({extended: false}))
 // for json
-// app.use(express.json());
+app.use(express.json());
 
 
 // routes
 app.get("/notes", (req, res) => {
-    console.log(req.body)
     // res.send("Hi!")
     res.sendFile(path.join(__dirname, "./public/notes.html"))
 })
@@ -36,6 +34,36 @@ app.get("/api/notes", (req, res) => {
 app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname, "./public/index.html"))
 
+})
+
+// post 
+app.post("/api/notes", (req, res) => {
+    // add the data to the notes
+    console.log(req.body);
+
+    fs.readFile("./db/db.json", "UTF8", (err, data) => {
+        if(err) {
+            console.log("There is an error!")
+            return;
+        }
+
+        const notes = JSON.parse(data)
+
+        console.log("Notes before push")
+        console.log(notes);
+        console.log("======")
+
+        notes.push(req.body);
+
+        console.log("Notes after push")
+        console.log(notes)
+
+        fs.writeFile("./db/db.json", JSON.stringify(notes), () => {
+            console.log("File overwritten successfully!")
+            
+            res.status(200).end();
+        } )
+    })
 })
 
 
