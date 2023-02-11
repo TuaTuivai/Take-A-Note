@@ -11,6 +11,22 @@ app.use(express.static("public"));
 app.use(express.urlencoded({extended: false}))
 // for json
 app.use(express.json());
+let noteCounter = 0;
+
+function createNote(content) {
+  noteCounter++;
+  const note = {
+    id: noteCounter,
+    content: content
+  };
+  return note;
+}
+
+const firstNote = createNote("First note");
+const secondNote = createNote("Second note");
+
+console.log(firstNote.id); // 1
+console.log(secondNote.id); // 2
 
 
 // routes
@@ -48,15 +64,8 @@ app.post("/api/notes", (req, res) => {
         }
 
         const notes = JSON.parse(data)
-
-        console.log("Notes before push")
-        console.log(notes);
-        console.log("======")
-
+        
         notes.push(req.body);
-
-        console.log("Notes after push")
-        console.log(notes)
 
         fs.writeFile("./db/db.json", JSON.stringify(notes), () => {
             console.log("File overwritten successfully!")
