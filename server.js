@@ -64,8 +64,26 @@ app.post("/api/notes", (req, res) => {
             res.status(200).end();
         } )
     })
-})
+});
 
+app.delete("/api/notes/:id", (req, res) => {
+    fs.readFile("./db/db.json", "UTF8", (err, data) => {
+      if (err) {
+        console.log("There is an error!");
+        return;
+      }
+  
+      let notes = JSON.parse(data);
+  
+      notes = notes.filter((note) => note.id !== req.params.id);
+  
+      fs.writeFile("./db/db.json", JSON.stringify(notes), () => {
+        console.log("Note deleted successfully!");
+        res.status(200).end();
+      });
+    });
+  });
+  
 
 app.listen(3001, () => {
     console.log("Server is running on PORT 3001!")
